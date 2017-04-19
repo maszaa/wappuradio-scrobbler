@@ -7,9 +7,8 @@ import pylast
 def getNowPlaying():
     try:
         nowPlaying = requests.get("https://wappuradio.fi/api/nowplaying")
-        artistTitle = nowPlaying.json()["song"].split('-')
-        return artistTitle[0].rstrip(), artistTitle[1].lstrip(), \
-               nowPlaying.json()["timestamp"]
+        artistTitle = nowPlaying.json()["song"].split(" - ")
+        return artistTitle[0], artistTitle[1], nowPlaying.json()["timestamp"]
     except requests.ConnectionError:
         print("Problem with fetching now playing data from Wappuradio API")
         return False, False, False
