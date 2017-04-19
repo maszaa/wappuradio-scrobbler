@@ -9,7 +9,7 @@ def getNowPlaying():
         nowPlaying = requests.get("https://wappuradio.fi/api/nowplaying")
         artistTitle = nowPlaying.json()["song"].split(" - ")
         return artistTitle[0], artistTitle[1], nowPlaying.json()["timestamp"]
-    except requests.ConnectionError:
+    except (KeyError, requests.ConnectionError):
         print("Problem with fetching now playing data from Wappuradio API")
         return False, False, False
 
@@ -17,8 +17,8 @@ def scrobble(username, network):
     oldStartedPlaying = ""
     while True:
         artist, title, startedPlaying = getNowPlaying()
-        if startedPlaying != oldStartedPlaying and \
-           artist and title and startedPlaying:
+        if startedPlaying != oldStartedPlaying and artist and title \
+           and startedPlaying:
             oldStartedPlaying = startedPlaying
             network.scrobble(artist = artist, title = title, \
                              timestamp = int(time.mktime(datetime.datetime.now().timetuple())))
@@ -30,17 +30,20 @@ def scrobble(username, network):
         time.sleep(60)
 
 def main():
-    apiKey = sys.argv[1]
-    apiSecret = sys.argv[2]
+    if len(sys.argv) == 5:
+        apiKey = sys.argv[1]
+        apiSecret = sys.argv[2]
 
-    username = sys.argv[3]
-    passwordHash = pylast.md5(sys.argv[4])
+        username = sys.argv[3]
+        passwordHash = pylast.md5(sys.argv[4])
 
-    # Create connection to Last.fm
-    network = pylast.LastFMNetwork(api_key=apiKey, api_secret=apiSecret,
-                                   username=username, password_hash=passwordHash)
+        # Create connection to Last.fm
+        network = pylast.LastFMNetwork(api_key=apiKey, api_secret=apiSecret,
+                                       username=username, password_hash=passwordHash)
 
-    scrobble(username, network)
-
+        scrobble(username, network)
+    # Incorrect amount of arguments passed   
+    print("Please give arguments API_key, API_secret, username and password" + \
+          " when running the script")
 
 main()
