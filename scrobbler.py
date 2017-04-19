@@ -25,7 +25,7 @@ def scrobble(username, network):
             
             # Confirm the scrobble
             print("Confirmation from Last.fm:")
-            print(network.get_user(username).get_recent_tracks(limit=1)[0])
+            print(network.get_user(username).get_recent_tracks(limit=1))
 
         time.sleep(60)
 
