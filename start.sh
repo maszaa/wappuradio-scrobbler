@@ -14,12 +14,11 @@ function activate_venv {
 if [ ! -d "$VENV" ]; then
     if [ "$OSTYPE" = "msys" ]; then
         python -m venv $VENV
-        activate_venv
     else
         python3 -m venv $VENV
-        activate_venv
     fi
 
+    activate_venv
     pip install -r requirements.txt
 fi
 
@@ -29,4 +28,8 @@ fi
 
 source env.sh
 
-python main.py
+if [ "$OSTYPE" = "msys" ]; then
+    python main.py
+else
+    python3 main.py
+fi
